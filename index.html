@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>Temperature Converter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="wrapper">
+        <div id="main">
+            <h1>Temperature Converter</h1>
+            <div class="inputField">
+                <label>Celcius:</label>
+                <input type="number" id="celsiusInput" value="20" step="1" min="-273.15"> °C
+            </div>
+            <div class="inputField">
+                <label>Fahrenheit:</label>
+                <input type="number" id="fahrenheitInput" step="1" min="-459,67"> °F
+            </div>
+            
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const celsiusInput = document.getElementById('celsiusInput');
+            const fahrenheitInput = document.getElementById('fahrenheitInput');
+
+            function convertToFahrenheit(celsius) {
+            return (celsius * 1.8) + 32;
+            }
+
+            function convertToCelsius(fahrenheit) {
+            return (fahrenheit - 32) / 1.8;
+            }
+
+            celsiusInput.addEventListener('input', function() {
+                const celsius = parseFloat(celsiusInput.value);
+                if (isNaN(celsius)) {
+                    fahrenheitInput.value = '';
+                    return;
+                }
+                const fahrenheit = convertToFahrenheit(celsius);
+                fahrenheitInput.value = fahrenheit.toFixed(2);
+                updateBackground(celsius)
+            });
+
+            fahrenheitInput.addEventListener('input', function() {
+                const fahrenheit = parseFloat(fahrenheitInput.value);
+                if (isNaN(fahrenheit)) {
+                    celsiusInput.value = '';
+                    return;
+                }
+                const celsius = convertToCelsius(fahrenheit);
+                celsiusInput.value = celsius.toFixed(2);
+                updateBackground(celsius);
+            });
+
+            function updateBackground(celsius) {
+                const colorScale = d3.scaleLinear()
+                    .domain([-50, 0, 20, 50, 100])
+                    .range(["#00245e", "#87fbff", "#86ff82", "#ff3b4b", "#540007"])
+                    .clamp(true);
+
+                const color = colorScale(celsius);
+                const rgbColor = d3.color(color).formatRgb();
+                document.body.style.backgroundColor = rgbColor;
+            }
+
+            celsiusInput.dispatchEvent(new Event("input"))
+
+        });
+
+    </script>
+    
+</body>
+</html>
